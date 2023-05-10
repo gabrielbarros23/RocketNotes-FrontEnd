@@ -59,7 +59,6 @@ export function New() {
             return alert("Você deixou uma tag no campo para adicionar, mas não clicou em adicionar. Clique para adicionar ou deixe o campo vazio.")
         }
 
-        console.log(title, description, links, tags,)
         const note = {
             title,
             description,

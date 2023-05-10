@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useAuth} from '../../hooks/auth'
 import {Container, Form, Avatar } from './style'
 import {api} from '../../services/api'
@@ -18,8 +18,7 @@ export function Profile(){
     const [passwordOld, setPasswordOld] = useState()
     const [passwordNew, setPasswordNew] = useState()
 
-    const avatarUrl = user.avatar ? `${api.defaults.baseURL}/files/${user.avatar}` : avatarPlaceholder
-    const [avatar, setAvatar] = useState(avatarUrl)
+    const [avatar, setAvatar] = useState()
     const [avatarFile, setAvatarFile] = useState(null)
 
     function handleBack(){
@@ -41,12 +40,25 @@ export function Profile(){
     function handleChangeAvatar(e){
         const file = e.target.files[0]
         setAvatarFile(file)
-        console.log(file)
-
+        
         const imagePreview = URL.createObjectURL(file);
         setAvatar(imagePreview)
-        console.log(imagePreview)
     }
+
+    useEffect(() => {
+        async function handleAvatar(){
+
+            if(user.avatar){
+                try{
+                    await api.get(`/files/${user.avatar}`)
+                    setAvatar(`${api.defaults.baseURL}/files/${user.avatar}`)
+                }catch{
+                    setAvatar(avatarPlaceholder)
+                }
+            }
+        }
+        handleAvatar()
+    },[avatar])
 
     return(
         <Container>
@@ -56,7 +68,7 @@ export function Profile(){
             <Form>
                 <Avatar>
                     <img 
-                        src={avatar} 
+                        src={avatar || avatarPlaceholder} 
                         alt="" 
                     />
 

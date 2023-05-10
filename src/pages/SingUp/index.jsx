@@ -17,7 +17,6 @@ export function SingUp() {
         if(!name || !email || !password){
            return alert("Preencha todos os campos!")
         }
-        console.log(name, email, password)
 
         api.post("/users",  {name, email, password}).then(() => {
             alert("Usuário cadastrado com sucesso!")

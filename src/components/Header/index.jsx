@@ -4,11 +4,13 @@ import {api} from '../../services/api'
 import avatarPlaceholder from '../../assets/avatar_placeholder.svg'
 import {useAuth} from '../../hooks/auth'
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 export function Header() {
 
     const {singOut, user} = useAuth()
-    const avatarUrl = user.avatar ? `${api.defaults.baseURL}/files/${user.avatar}` : avatarPlaceholder
+    const [avatar, setAvatar] = useState()
+
     const navigate = useNavigate()
 
     function handleSingOut(){
@@ -16,11 +18,25 @@ export function Header() {
         singOut()
     }
 
+    useEffect(() => {
+        async function handleAvatar(){
+
+            if(user.avatar){
+                try{
+                    await api.get(`/files/${user.avatar}`)
+                    setAvatar(`${api.defaults.baseURL}/files/${user.avatar}`)
+                }catch{
+                    setAvatar(avatarPlaceholder)
+                }
+            }
+        }
+        handleAvatar()
+    },[])
 
     return(
         <Container>
             <Profile to="/profile">
-                <img src={avatarUrl} alt="" />
+                <img src={avatar || avatarPlaceholder} alt="" />
 
                 <div>
                     <span>Bem vindo</span>
